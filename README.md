@@ -1,1 +1,1 @@
-# sd6123_federated_learning
+# SD6123: Data Privacy Group Assignment
