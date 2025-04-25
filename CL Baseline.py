@@ -40,10 +40,10 @@ transform = transforms.Compose([
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # normalize CIFAR images
 ])
 
-trainset = datasets.CIFAR10(root="./data", train=True, download=False, transform=transform)
+trainset = datasets.CIFAR10(root="./data", train=True, download=True, transform=transform)
 trainloader = DataLoader(trainset, batch_size=64, shuffle=True)
 
-testset = datasets.CIFAR10(root="./data", train=False, download=False, transform=transform)
+testset = datasets.CIFAR10(root="./data", train=False, download=True, transform=transform)
 testloader = DataLoader(testset, batch_size=64)
 
 # Track metrics
@@ -67,24 +67,43 @@ def train(model, loader, optimizer, epochs=10):
         avg_loss = total_loss / len(loader)
         train_losses.append(avg_loss)
 
-        # Evaluate test accuracy
-        accuracy = test(model, testloader)
-        test_accuracies.append(accuracy)
+        acc_top1, acc_top5, test_loss = test(model, testloader)
+        test_accuracies.append(acc_top1)
+        print(f"Epoch {epoch+1}: Train Loss = {avg_loss:.4f}, Test Loss = {test_loss:.4f}, Top-1 = {acc_top1:.2f}%, Top-5 = {acc_top5:.2f}%")
 
-        print(f"Epoch {epoch+1}: Loss = {avg_loss:.4f}, Test Accuracy = {accuracy:.2f}%")
+
+# Top 5 Accuracy:
+def compute_top5_accuracy(output, target):
+    # Get top 5 predictions for each sample
+    _, top5 = output.topk(5, dim=1)
+    # Expand the target to match top5 shape
+    target_expanded = target.view(-1, 1).expand_as(top5)
+    # Count how many times the target label appears in the top 5
+    correct_top5 = (top5 == target_expanded).sum().item()
+    return 100 * correct_top5 / target.size(0)
 
 # Testing function
 def test(model, loader):
     model.eval()
-    correct, total = 0, 0
+    correct_top1, correct_top5, total = 0, 0, 0
+    total_loss = 0  # Add this to accumulate test loss
     with torch.no_grad():
         for x, y in loader:
             x, y = x.to(device), y.to(device)
-            pred = model(x).argmax(dim=1)
-            correct += (pred == y).sum().item()
+            outputs = model(x)
+            loss = F.cross_entropy(outputs, y)  # Compute test loss
+            total_loss += loss.item()
+
+            pred_top1 = outputs.argmax(dim=1)
+            correct_top1 += (pred_top1 == y).sum().item()
+            correct_top5 += compute_top5_accuracy(outputs, y) * y.size(0) / 100
             total += y.size(0)
-    accuracy = 100 * correct / total
-    return accuracy
+
+    avg_loss = total_loss / len(loader)
+    acc_top1 = 100 * correct_top1 / total
+    acc_top5 = 100 * correct_top5 / total
+    return acc_top1, acc_top5, avg_loss
+
 
 # Run
 model = CIFARNet().to(device)
@@ -137,3 +156,38 @@ imshow(torchvision.utils.make_grid(images))
 outputs = model(images.to(device))
 _, predicted = torch.max(outputs, 1)
 print(f'Predicted labels: {predicted}')
+
+def get_confidence_scores(model, dataloader):
+    model.eval()
+    scores = []
+    labels = []
+    with torch.no_grad():
+        for x, y in dataloader:
+            x, y = x.to(device), y.to(device)
+            outputs = model(x)
+            probs = F.softmax(outputs, dim=1)
+            max_scores, _ = probs.max(dim=1)
+            scores.extend(max_scores.cpu().numpy())
+            labels.extend([1] * x.size(0))  # initially assume "members"
+    return np.array(scores), np.array(labels)
+
+# Get confidence scores
+train_scores, train_labels = get_confidence_scores(model, trainloader)
+test_scores, test_labels = get_confidence_scores(model, testloader)
+test_labels[:] = 0  # label test samples as "non-members"
+
+# Combine
+all_scores = np.concatenate([train_scores, test_scores])
+all_labels = np.concatenate([train_labels, test_labels])
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+attack_model = LogisticRegression()
+all_scores = all_scores.reshape(-1, 1)
+attack_model.fit(all_scores, all_labels)
+
+# Predict and evaluate attack success
+predictions = attack_model.predict(all_scores)
+mia_accuracy = accuracy_score(all_labels, predictions)
+print(f"MIA Attack Success Rate: {mia_accuracy * 100:.2f}%")
