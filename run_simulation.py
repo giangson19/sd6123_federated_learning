@@ -15,12 +15,9 @@ from torchvision import datasets, transforms
 import flwr as fl
 from flwr.common import Metrics
 from typing import Dict, Tuple, List
-from flwr.server.strategy import FedProx, FedAvgM, FedAvg
-from flwr.client import NumPyClient
-
-from model import CIFARNet  # Assuming CIFARNet is defined in model.py
-from data import load_cifar10, create_dataloaders  # Assuming data loading functions are in data.py
-from client import CIFAR10Client, client_fn  # Assuming CIFAR10Client is defined in client.py
+# from flwr.server.strategy import FedAvg, FedProx, FedAvgM
+from server import FedAvg, FedProx, FedAvgM
+from client import client_fn  # Assuming CIFAR10Client is defined in client.py
 
 # Device
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
