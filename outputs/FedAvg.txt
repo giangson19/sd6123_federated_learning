@@ -1,0 +1,47 @@
+INFO :      aggregate_evaluate: received 3 results and 0 failures
+INFO :      
+INFO :      [SUMMARY]
+INFO :      Run finished 10 round(s) in 173.47s
+INFO :          History (loss, distributed):
+INFO :                  round 1: 0.022307735812664032
+INFO :                  round 2: 0.01748635465502739
+INFO :                  round 3: 0.015461156523227692
+INFO :                  round 4: 0.014685211139917373
+INFO :                  round 5: 0.01392154700756073
+INFO :                  round 6: 0.013762932622432708
+INFO :                  round 7: 0.012924239242076873
+INFO :                  round 8: 0.012740814357995987
+INFO :                  round 9: 0.012326332305371761
+INFO :                  round 10: 0.01255294596850872
+INFO :          History (metrics, distributed, evaluate):
+INFO :          {'accuracies_top1': [(1, 0.5385),
+INFO :                               (2, 0.6057),
+INFO :                               (3, 0.6541),
+INFO :                               (4, 0.6765),
+INFO :                               (5, 0.691),
+INFO :                               (6, 0.6982),
+INFO :                               (7, 0.7154),
+INFO :                               (8, 0.7278),
+INFO :                               (9, 0.7367),
+INFO :                               (10, 0.7323)],
+INFO :           'accuracies_top5': [(1, 0.9403),
+INFO :                               (2, 0.962),
+INFO :                               (3, 0.9683),
+INFO :                               (4, 0.9732),
+INFO :                               (5, 0.9749),
+INFO :                               (6, 0.9759),
+INFO :                               (7, 0.9765),
+INFO :                               (8, 0.9759),
+INFO :                               (9, 0.9792),
+INFO :                               (10, 0.979)],
+INFO :           'losses': [(1, 0.022307735812664032),
+INFO :                      (2, 0.01748635465502739),
+INFO :                      (3, 0.015461156523227692),
+INFO :                      (4, 0.014685211139917373),
+INFO :                      (5, 0.01392154700756073),
+INFO :                      (6, 0.013762932622432708),
+INFO :                      (7, 0.012924239242076873),
+INFO :                      (8, 0.012740814357995987),
+INFO :                      (9, 0.012326332305371761),
+INFO :                      (10, 0.01255294596850872)]}
+INFO :      
