@@ -30,11 +30,16 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Configure the FedProx strategy
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     # Multiply accuracy of each client by number of examples used
-    accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
+    accuracies_top1 = [num_examples * m["accuracy_top1"] for num_examples, m in metrics]
+    accuracies_top5 = [num_examples * m["accuracy_top5"] for num_examples, m in metrics]
+    losses = [num_examples * m["avg_loss"] for num_examples, m in metrics]
     examples = [num_examples for num_examples, _ in metrics]
 
     # Aggregate and return custom metric (weighted accuracy)
-    return {"accuracy": sum(accuracies) / sum(examples)}
+    return {"accuracies_top1": sum(accuracies_top1) / sum(examples),
+            "accuracies_top5": sum(accuracies_top5) / sum(examples),
+            "losses": sum(losses) / sum(examples)
+            }
 
 strategy = FedAvgM(
     fraction_fit=1.0,  # Sample all available clients for each round

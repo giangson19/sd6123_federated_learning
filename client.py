@@ -50,8 +50,8 @@ class CIFAR10Client(NumPyClient):
     def evaluate(self, parameters: fl.common.NDArrays, config: Dict[str, fl.common.Scalar]) -> Tuple[float, int, Dict[str, fl.common.Scalar]]:
         """Evaluate the model on the locally held dataset."""
         self.set_parameters(parameters, config)
-        loss, accuracy = self._test(self.model, self.testloader)
-        return loss, len(self.testloader.dataset), {"accuracy": accuracy}
+        acc_top1, acc_top5, avg_loss = self._test(self.model, self.testloader)
+        return avg_loss, len(self.testloader.dataset), {"accuracy_top1": acc_top1, 'accuracy_top5': acc_top5, 'avg_loss': avg_loss}
 
     def _parameters_to_state_dict(self, parameters: fl.common.NDArrays) -> Dict[str, torch.Tensor]:
         """Convert NumPy parameters to a PyTorch state dictionary."""
@@ -80,21 +80,35 @@ class CIFAR10Client(NumPyClient):
             optimizer.step()
 
     def _test(self, model, loader):
+        # Top 5 Accuracy:
+        def compute_top5_accuracy(output, target):
+            # Get top 5 predictions for each sample
+            _, top5 = output.topk(5, dim=1)
+            # Expand the target to match top5 shape
+            target_expanded = target.view(-1, 1).expand_as(top5)
+            # Count how many times the target label appears in the top 5
+            correct_top5 = (top5 == target_expanded).sum().item()
+            return 100 * correct_top5 / target.size(0)
+        
         model.eval()
-        correct, total = 0, 0
-        total_loss = 0
+        correct_top1, correct_top5, total = 0, 0, 0
+        total_loss = 0  # Add this to accumulate test loss
         with torch.no_grad():
             for x, y in loader:
                 x, y = x.to(DEVICE), y.to(DEVICE)
                 outputs = model(x)
-                loss = F.cross_entropy(outputs, y, reduction='sum')
+                loss = F.cross_entropy(outputs, y)  # Compute test loss
                 total_loss += loss.item()
-                _, predicted = torch.max(outputs, 1)
+
+                pred_top1 = outputs.argmax(dim=1)
+                correct_top1 += (pred_top1 == y).sum().item()
+                correct_top5 += compute_top5_accuracy(outputs, y) * y.size(0) / 100
                 total += y.size(0)
-                correct += (predicted == y).sum().item()
+
         avg_loss = total_loss / total
-        accuracy = correct / total
-        return avg_loss, accuracy
+        accuracy = correct_top1 / total
+        acc_top5 = correct_top5 / total
+        return accuracy, acc_top5, avg_loss
 
 # Generate n random clients with different dataset splits
 def generate_cifar10_clients(num_clients=3, client_config=None):
