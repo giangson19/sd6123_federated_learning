@@ -1,0 +1,16 @@
+torch
+datasets
+torchvision
+numpy
+pandas
+matplotlib
+scikit-learn
+transformers
+tqdm
+tokenizers
+rouge_score
+ipython
+ipykernels
+flwr
+flwr[simulation] 
+flwr-datasets[vision]
