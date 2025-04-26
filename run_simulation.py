@@ -15,10 +15,10 @@ from torchvision import datasets, transforms
 import flwr as fl
 from flwr.common import Metrics
 from typing import Dict, Tuple, List
-# from flwr.server.strategy import FedAvg, FedProx, FedAvgM
+# from flwr.server.strategy import FedAvgM
 from server import FedAvg, FedProx, FedAvgM
 from client import client_fn  # Assuming CIFAR10Client is defined in client.py
-
+from model import CIFARNet  # Assuming CIFARNet is defined in model.py
 # Device
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -84,8 +84,13 @@ def get_strategy(args):
     }
     
     if args.strategy.lower() == 'fedavgm':
+        # Convert model weights to Flower Parameters
+        model = CIFARNet().to(DEVICE)
+        model_weights = [val.cpu().numpy() for _, val in model.state_dict().items()]
+        initial_parameters = fl.common.ndarrays_to_parameters(model_weights)
         return FedAvgM(
             **common_params,
+            initial_parameters=initial_parameters,
             server_learning_rate=args.server_learning_rate,
             server_momentum=args.server_momentum,
         )
