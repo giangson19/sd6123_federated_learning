@@ -12,7 +12,7 @@ This repository contains the implementation for the SD6123 Data Privacy Group As
 ### Setup
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/sd6123_federated_learning.git
+    git clone git@github.com:giangson19/sd6123_federated_learning.git
     cd sd6123_federated_learning
     ```
 
