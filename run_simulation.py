@@ -112,7 +112,7 @@ if __name__ == "__main__":
     print(f"Number of rounds: {args.num_rounds}")
     
     fl.simulation.start_simulation(
-        client_fn=client_fn,
+        client_fn=lambda cid: client_fn(cid, args.num_clients),
         num_clients=args.num_clients,
         config=fl.server.ServerConfig(num_rounds=args.num_rounds),
         strategy=strategy,

@@ -124,10 +124,15 @@ def generate_cifar10_clients(num_clients=3, client_config=None):
         clients.append(CIFAR10Client(str(i), trainloader, testloader, client_config))
     return clients
 
-def client_fn(cid: str):
+    
+def client_fn(cid: str, num_clients: int = None):
     """Create a Flower client representing a single device."""
+    # Get num_clients from args if not provided directly
+    if num_clients is None:
+        # Access args from the global scope
+        num_clients = args.num_clients
+        
     trainset, testset = load_cifar10()
-    num_clients = 3 # Assuming 3 clients for this example
 
     # Handle uneven splits for the training set
     base_size_train = len(trainset) // num_clients
