@@ -18,8 +18,8 @@ This repository contains the implementation for the SD6123 Data Privacy Group As
 
 2. Create a virtual environment (optional but recommended):
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use: venv\Scripts\activate
+    python -m venv fl_simulation
+    source fl_simulation/bin/activate  # On Windows use: venv\Scripts\activate
     ```
 
 3. Install the required packages:
