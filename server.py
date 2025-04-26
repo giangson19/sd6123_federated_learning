@@ -68,7 +68,7 @@ class FedProx(fl.server.strategy.FedProx):
         )
 
         if aggregated_parameters is not None:
-            save_model(net, "fedavg", aggregated_parameters)
+            save_model(net, "fedprox", aggregated_parameters)
             
         return aggregated_parameters, aggregated_metrics
 
@@ -87,6 +87,6 @@ class FedAvgM(fl.server.strategy.FedAvgM):
         )
 
         if aggregated_parameters is not None:
-            save_model(net, "fedavg", aggregated_parameters)
+            save_model(net, "fedavgm", aggregated_parameters)
 
         return aggregated_parameters, aggregated_metrics
