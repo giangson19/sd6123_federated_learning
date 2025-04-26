@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import torchvision
 import numpy as np
 import argparse
-
+import json
 ssl._create_default_https_context = ssl._create_unverified_context
 
 import torch
@@ -108,10 +108,13 @@ if __name__ == "__main__":
     print(f"Number of clients: {args.num_clients}")
     print(f"Number of rounds: {args.num_rounds}")
     
-    fl.simulation.start_simulation(
+    history = fl.simulation.start_simulation(
         client_fn=lambda cid: client_fn(cid, args.num_clients),
         num_clients=args.num_clients,
         config=fl.server.ServerConfig(num_rounds=args.num_rounds),
         strategy=strategy,
         client_resources={"num_cpus": 1, "memory": 4096},
     )
+
+    with open(f"outputs/history_{args.strategy}.json", "w") as f:
+        json.dump(history.metrics_distributed, f)
