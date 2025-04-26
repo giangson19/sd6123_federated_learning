@@ -59,15 +59,11 @@ def main():
     
     # Load model
     model = CIFARNet().to(device)
-    list_of_files = [fname for fname in glob.glob(f"models/{args.strategy}/model_round_*")]
     
-    if not list_of_files:
-        print(f"No model files found for strategy '{args.strategy}'")
-        sys.exit(1)
         
-    latest_round_file = max(list_of_files, key=os.path.getctime)
-    print("Loading pre-trained model from:", latest_round_file)
-    state_dict = torch.load(latest_round_file)
+    model_file = 'models/{}_model.pth'.format(args.strategy)
+    print("Loading pre-trained model from:", model_file)
+    state_dict = torch.load(model_file)
     model.load_state_dict(state_dict)
     model.eval()
 
