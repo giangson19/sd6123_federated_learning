@@ -16,7 +16,7 @@ import flwr as fl
 from flwr.common import Metrics
 from typing import Dict, Tuple, List
 # from flwr.server.strategy import FedAvgM
-from server import FedAvg, FedProx, FedAvgM
+from server import FedAvg, FedProx, FedAvgM, FedAdam
 from client import client_fn  # Assuming CIFAR10Client is defined in client.py
 from model import CIFARNet  # Assuming CIFARNet is defined in model.py
 # Device
@@ -41,7 +41,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Federated Learning with Flower')
     
     # Strategy selection
-    parser.add_argument('--strategy', type=str, default='fedavgm', choices=['fedavgm', 'fedprox', 'fedavg'],
+    parser.add_argument('--strategy', type=str, default='fedavgm', 
+                        choices=['fedavgm', 'fedprox', 'fedavg', 'fedadam'],
                         help='FL strategy to use (default: fedavgm)')
     
     # Common strategy parameters
@@ -64,6 +65,18 @@ def parse_arguments():
     parser.add_argument('--proximal-mu', type=float, default=0.1,
                         help='Proximal term coefficient for FedProx (default: 0.1)')
     
+    # FedAdam parameters
+    parser.add_argument('--eta', type=float, default=1e-1,
+                        help='Server-side learning rate for FedAdam (default: 1e-1)')
+    parser.add_argument('--eta-l', type=float, default=1e-1,
+                        help='Client-side learning rate for FedAdam (default: 1e-1)')
+    parser.add_argument('--beta-1', type=float, default=0.9,
+                        help='Momentum parameter for FedAdam (default: 0.9)')
+    parser.add_argument('--beta-2', type=float, default=0.99,
+                        help='Second moment parameter for FedAdam (default: 0.99)')
+    parser.add_argument('--tau', type=float, default=1e-9,
+                        help='Adaptability degree for FedAdam (default: 1e-9)')
+    
     # Simulation parameters
     parser.add_argument('--num-clients', type=int, default=3,
                         help='Number of clients to simulate (default: 3)')
@@ -83,16 +96,27 @@ def get_strategy(args):
         'evaluate_metrics_aggregation_fn': weighted_average,
     }
     
+    # Convert model weights to Flower Parameters
+    model = CIFARNet().to(DEVICE)
+    model_weights = [val.cpu().numpy() for _, val in model.state_dict().items()]
+    initial_parameters = fl.common.ndarrays_to_parameters(model_weights)
+    
     if args.strategy.lower() == 'fedavgm':
-        # Convert model weights to Flower Parameters
-        model = CIFARNet().to(DEVICE)
-        model_weights = [val.cpu().numpy() for _, val in model.state_dict().items()]
-        initial_parameters = fl.common.ndarrays_to_parameters(model_weights)
         return FedAvgM(
             **common_params,
             initial_parameters=initial_parameters,
             server_learning_rate=args.server_learning_rate,
             server_momentum=args.server_momentum,
+        )
+    elif args.strategy.lower() == 'fedadam':
+        return FedAdam(
+            **common_params,
+            initial_parameters=initial_parameters,
+            eta = args.eta,
+            eta_l = args.eta_l,
+            beta_1 = args.beta_1,
+            beta_2 = args.beta_2,
+            tau = args.tau,
         )
     elif args.strategy.lower() == 'fedprox':
         return FedProx(

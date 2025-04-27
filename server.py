@@ -90,3 +90,23 @@ class FedAvgM(fl.server.strategy.FedAvgM):
             save_model(net, "fedavgm", aggregated_parameters)
 
         return aggregated_parameters, aggregated_metrics
+    
+class FedAdam(fl.server.strategy.FedAdam):
+    def aggregate_fit(
+        self,
+        server_round: int,
+        results: list[tuple[fl.server.client_proxy.ClientProxy, fl.common.FitRes]],
+        failures: list[Union[tuple[ClientProxy, FitRes], BaseException]],
+    ) -> tuple[Optional[Parameters], dict[str, Scalar]]:
+        """Aggregamte model weights using weighted average and store checkpoint"""
+
+        # Call aggregate_fit from base class (FedAvg) to aggregate parameters and metrics
+        aggregated_parameters, aggregated_metrics = super().aggregate_fit(
+            server_round, results, failures
+        )
+
+        if aggregated_parameters is not None:
+            save_model(net, "fedadam", aggregated_parameters)
+            
+        return aggregated_parameters, aggregated_metrics
+    
