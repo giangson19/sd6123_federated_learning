@@ -1,0 +1,38 @@
+Federated Learning Training and Evaluation Report
+--------------------------------------------------
+
+Round 1:
+Epoch 1: Train Loss = 1.3275, Test Loss = 1.1018, Top-1 Accuracy = 60.85%, Top-5 Accuracy = 95.80%
+Client Training Time (Epoch): 10.50s
+Round 2:
+Epoch 1: Train Loss = 0.9375, Test Loss = 0.9131, Top-1 Accuracy = 67.66%, Top-5 Accuracy = 97.10%
+Client Training Time (Epoch): 11.02s
+Round 3:
+Epoch 1: Train Loss = 0.7633, Test Loss = 0.8798, Top-1 Accuracy = 69.61%, Top-5 Accuracy = 97.63%
+Client Training Time (Epoch): 11.37s
+Round 4:
+Epoch 1: Train Loss = 0.6257, Test Loss = 0.8188, Top-1 Accuracy = 71.17%, Top-5 Accuracy = 97.67%
+Client Training Time (Epoch): 11.03s
+Round 5:
+Epoch 1: Train Loss = 0.5022, Test Loss = 0.8313, Top-1 Accuracy = 72.78%, Top-5 Accuracy = 97.94%
+Client Training Time (Epoch): 11.08s
+Round 6:
+Epoch 1: Train Loss = 0.3809, Test Loss = 0.9161, Top-1 Accuracy = 72.33%, Top-5 Accuracy = 97.71%
+Client Training Time (Epoch): 10.97s
+Round 7:
+Epoch 1: Train Loss = 0.2799, Test Loss = 1.0118, Top-1 Accuracy = 71.84%, Top-5 Accuracy = 97.52%
+Client Training Time (Epoch): 10.94s
+Round 8:
+Epoch 1: Train Loss = 0.1922, Test Loss = 1.1658, Top-1 Accuracy = 72.30%, Top-5 Accuracy = 97.66%
+Client Training Time (Epoch): 11.08s
+Round 9:
+Epoch 1: Train Loss = 0.1350, Test Loss = 1.2270, Top-1 Accuracy = 71.84%, Top-5 Accuracy = 97.61%
+Client Training Time (Epoch): 11.00s
+Round 10:
+Epoch 1: Train Loss = 0.1027, Test Loss = 1.4064, Top-1 Accuracy = 71.85%, Top-5 Accuracy = 97.50%
+Client Training Time (Epoch): 11.06s
+
+Final Evaluation (After 10 Rounds):
+Top-1 Accuracy (Central): 71.85%
+Top-5 Accuracy (Central): 97.50%
+Cross-Entropy Loss (Central): 1.41

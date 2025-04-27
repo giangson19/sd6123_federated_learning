@@ -1,0 +1,77 @@
+{
+    "training_losses": [
+        1.3003126296698284,
+        0.9312641389687043,
+        0.764256468476237,
+        0.6319575446569706,
+        0.5090605720420323,
+        0.39170385018715165,
+        0.2843692084236066,
+        0.19787961119771613,
+        0.14290037000423197,
+        0.10691583831139538
+    ],
+    "test_accuracies": [
+        {
+            "epoch": 1,
+            "top_1_accuracy": 62.78,
+            "top_5_accuracy": 96.22,
+            "test_loss": 1.0577875569367865
+        },
+        {
+            "epoch": 2,
+            "top_1_accuracy": 67.66,
+            "top_5_accuracy": 97.28,
+            "test_loss": 0.9203044096375727
+        },
+        {
+            "epoch": 3,
+            "top_1_accuracy": 70.32,
+            "top_5_accuracy": 97.45,
+            "test_loss": 0.8590698709153826
+        },
+        {
+            "epoch": 4,
+            "top_1_accuracy": 71.91,
+            "top_5_accuracy": 97.72,
+            "test_loss": 0.8287175931748311
+        },
+        {
+            "epoch": 5,
+            "top_1_accuracy": 71.4,
+            "top_5_accuracy": 97.86,
+            "test_loss": 0.8648887155162301
+        },
+        {
+            "epoch": 6,
+            "top_1_accuracy": 72.27,
+            "top_5_accuracy": 97.85,
+            "test_loss": 0.8985749107257576
+        },
+        {
+            "epoch": 7,
+            "top_1_accuracy": 71.95,
+            "top_5_accuracy": 97.75,
+            "test_loss": 0.9981391399529329
+        },
+        {
+            "epoch": 8,
+            "top_1_accuracy": 72.11,
+            "top_5_accuracy": 97.77,
+            "test_loss": 1.1247510222872352
+        },
+        {
+            "epoch": 9,
+            "top_1_accuracy": 70.91,
+            "top_5_accuracy": 97.36,
+            "test_loss": 1.241006690605431
+        },
+        {
+            "epoch": 10,
+            "top_1_accuracy": 70.6,
+            "top_5_accuracy": 97.47,
+            "test_loss": 1.4582097070991613
+        }
+    ],
+    "mia_attack_success_rate": 83.35166666666667
+}
