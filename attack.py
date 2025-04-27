@@ -97,14 +97,20 @@ def main():
     # Train attack model
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import accuracy_score
+    from sklearn.model_selection import train_test_split
 
     attack_model = LogisticRegression()
-    all_scores = all_scores.reshape(-1, 1)
-    attack_model.fit(all_scores, all_labels)
 
-    # Predict and evaluate attack success
-    predictions = attack_model.predict(all_scores)
-    mia_accuracy = accuracy_score(all_labels, predictions)
+    all_scores = all_scores.reshape(-1, 1)
+
+    # Split the combined dataset into training and validation sets for the attack model
+    X_train, X_val, y_train, y_val = train_test_split(all_scores, all_labels, test_size=0.3, random_state=42)
+
+    attack_model.fit(X_train, y_train)
+
+    # Evaluate attack model on the held-out validation set
+    predictions = attack_model.predict(X_val)
+    mia_accuracy = accuracy_score(y_val, predictions)
     print(f"MIA against {args.strategy} - Attack Success Rate: {mia_accuracy * 100:.2f}%")
 
 if __name__ == "__main__":
