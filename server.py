@@ -110,7 +110,7 @@ class FedAdam(fl.server.strategy.FedAdam):
             
         return aggregated_parameters, aggregated_metrics
     
-class DifferentialPrivacyClientSideAdaptiveClipping(fl.server.strategy.DifferentialPrivacyClientSideAdaptiveClipping):
+class DifferentialPrivacyClientSideFixedClipping(fl.server.strategy.DifferentialPrivacyClientSideFixedClipping):
     def aggregate_fit(
         self,
         server_round: int,
@@ -124,6 +124,6 @@ class DifferentialPrivacyClientSideAdaptiveClipping(fl.server.strategy.Different
         )
 
         if aggregated_parameters is not None:
-            save_model(net, "differentialprivacyclientsideadaptiveclipping", aggregated_parameters)
+            save_model(net, "differentialprivacyclientsidefixedclipping", aggregated_parameters)
             
         return aggregated_parameters, aggregated_metrics
