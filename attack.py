@@ -63,7 +63,7 @@ def main():
         
     model_file = 'models/{}_model.pth'.format(args.strategy)
     print("Loading pre-trained model from:", model_file)
-    state_dict = torch.load(model_file)
+    state_dict = torch.load(model_file, map_location=device)
     model.load_state_dict(state_dict)
     model.eval()
 
