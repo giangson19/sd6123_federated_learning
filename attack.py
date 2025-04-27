@@ -22,7 +22,7 @@ import numpy as np
 def parse_args():
     parser = argparse.ArgumentParser(description='Membership Inference Attack on Federated Learning Models')
     parser.add_argument('--strategy', type=str, default="fedavg", 
-                        choices=["fedavg", "fedprox", "fedavgm", "fedadam"],
+                        choices=["fedavg", "fedprox", "fedavgm", "fedadam", 'dpfedavgadaptive'],
                         help='Federated learning strategy')
     parser.add_argument('--batch_size', type=int, default=64,
                         help='Batch size for loading data')

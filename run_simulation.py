@@ -16,7 +16,7 @@ import flwr as fl
 from flwr.common import Metrics
 from typing import Dict, Tuple, List
 # from flwr.server.strategy import FedAvgM
-from server import FedAvg, FedProx, FedAvgM, FedAdam
+from server import FedAvg, FedProx, FedAvgM, FedAdam, DPFedAvgAdaptive
 from client import client_fn  # Assuming CIFAR10Client is defined in client.py
 from model import CIFARNet  # Assuming CIFARNet is defined in model.py
 # Device
@@ -42,7 +42,7 @@ def parse_arguments():
     
     # Strategy selection
     parser.add_argument('--strategy', type=str, default='fedavgm', 
-                        choices=['fedavgm', 'fedprox', 'fedavg', 'fedadam'],
+                        choices=['fedavgm', 'fedprox', 'fedavg', 'fedadam', 'dpfedavgadaptive'],
                         help='FL strategy to use (default: fedavgm)')
     
     # Common strategy parameters
@@ -76,6 +76,20 @@ def parse_arguments():
                         help='Second moment parameter for FedAdam (default: 0.99)')
     parser.add_argument('--tau', type=float, default=1e-9,
                         help='Adaptability degree for FedAdam (default: 1e-9)')
+    
+    # DP-FedAvg parameters
+    parser.add_argument('--init-clip-norm', type=float, default=0.1,
+                        help='Initial gradient clipping norm (default: 0.1)')
+    parser.add_argument('--noise-multiplier', type=float, default=1.0,
+                        help='Noise multiplier for differential privacy (default: 1.0)')
+    parser.add_argument('--server-side-noising', type=bool, default=True,
+                        help='Whether to add noise on server side (default: True)')
+    parser.add_argument('--clip-norm-lr', type=float, default=0.2,
+                        help='Learning rate for adaptive clipping (default: 0.2)')
+    parser.add_argument('--clip-norm-target-quantile', type=float, default=0.5,
+                        help='Target quantile for adaptive clipping (default: 0.5)')
+    parser.add_argument('--clip-count-stddev', type=float, default=0.0,
+                        help='Standard deviation for clip count (default: 0.0)')
     
     # Simulation parameters
     parser.add_argument('--num-clients', type=int, default=3,
@@ -118,6 +132,18 @@ def get_strategy(args):
             beta_2 = args.beta_2,
             tau = args.tau,
         )
+        
+    elif args.strategy.lower() == 'dpfedavgadaptive':
+        return DPFedAvgAdaptive(
+            **common_params,
+            init_clip_norm=args.init_clip_norm,
+            noise_multiplier=args.noise_multiplier,
+            server_side_noising=args.server_side_noising,
+            clip_norm_lr=args.clip_norm_lr,
+            clip_norm_target_quantile=args.clip_norm_target_quantile,
+            clip_count_stddev=args.clip_count_stddev,
+        )
+        
     elif args.strategy.lower() == 'fedprox':
         return FedProx(
             **common_params,
